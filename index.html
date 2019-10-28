@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8">
+        <title>Cube Simulator</title>
+        <meta name="description" content="Cube Simulator">
+        <meta name="author" content="gwanryo">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <style>
+            div.cube-six {
+                position: fixed;
+                right: 0;
+                top: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script src="vendors/cubejs/lib/cube.js"></script>
+        <script src="vendors/cubejs/lib/solve.js"></script>
+        <!-- <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h1>Cube Simulator</h1>
+                </div>
+            </div>
+        </div> -->
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <div class="cube-info">
+                        <div class="cube-status" style="min-height:300px">
+                        </div>
+                    </div>
+                    <div class="btn-group" role="group" aria-label="cube-control">
+                        <button type="button" class="btn btn-light btn-start">Start</button>
+                        <button type="button" class="btn btn-light btn-prev">Prev</button>
+                        <button type="button" class="btn btn-light btn-next">Next</button>
+                    </div>
+                    <div class="cube-six" style="min-height:300px">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td class="cube-up"></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="cube-left"></td>
+                                    <td class="cube-front"></td>
+                                    <td class="cube-right"></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td class="cube-bottom"></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td class="cube-back"></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            const cube = new Cube();
+            let algo, scramble, prev_algo = [], next_algo = [];
+
+            $('button.btn-start').click(function() {
+                cube.randomize();
+                console.log(cube.asString());
+                
+                Cube.initSolver();
+                algo = cube.solve();
+                next_algo = algo.split(' ');
+                scramble = Cube.inverse(algo);
+
+                reloadCube(scramble);
+            });
+
+            //cube.fromString("UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB");
+            $('button.btn-prev').click(function() {
+                if (prev_algo.length > 0) {
+
+                } else {
+                    alert('No prev steps!');
+                }
+            });
+
+            $('button.btn-next').click(function() {
+                if (next_algo.length > 0) {
+                    let next_move = next_algo[0];
+                    prev_algo.push(next_move);
+                    algo = algo.replace(next_move, '').trim();
+                    next_algo.splice(0, 1);
+
+                    cube.move(next_move);
+                    reloadCube(Cube.inverse(algo));
+                } else {
+                    alert('No next steps!');
+                }
+            });
+
+            function reloadCube(method) {
+                var s = method.replace(/\s+/g, ''),  // remove spaces
+                    url = "http://cube.crider.co.uk/visualcube.png?fmt=png&view=trans&size=300&alg=" + s;
+                    url_up = "http://cube.crider.co.uk/visualcube.png?fmt=png&r=x-90y0z0&size=150&alg=" + s;
+                    url_front = "http://cube.crider.co.uk/visualcube.png?fmt=png&r=x0y0z0&size=150&alg=" + s;
+                    url_bottom = "http://cube.crider.co.uk/visualcube.png?fmt=png&r=x90y0z0&size=150&alg=" + s;
+                    url_right = "http://cube.crider.co.uk/visualcube.png?fmt=png&r=x0y90z0&size=150&alg=" + s;
+                    url_left = "http://cube.crider.co.uk/visualcube.png?fmt=png&r=x0y-90z0&size=150&alg=" + s;
+                    url_back = "http://cube.crider.co.uk/visualcube.png?fmt=png&r=x180y0z0&size=150&alg=" + s;
+                $('div.cube-status').append(algo + "<br>" + method + "<br><img src=\"" + url + "\"><br>");
+                $('td.cube-front').html("<img src=\"" + url_front + "\"><br>");
+                $('td.cube-up').html("<img src=\"" + url_up + "\"><br>");
+                $('td.cube-bottom').html("<img src=\"" + url_bottom + "\"><br>");
+                $('td.cube-right').html("<img src=\"" + url_right + "\"><br>");
+                $('td.cube-left').html("<img src=\"" + url_left + "\"><br>");
+                $('td.cube-back').html("<img src=\"" + url_back + "\"><br>");
+            }
+        </script>
+    </body>
+</html>
