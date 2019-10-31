@@ -1,6 +1,3 @@
 [submodule "vendors/cubejs"]
 	path = vendors/cubejs
 	url = https://github.com/ldez/cubejs
-[submodule "vendors/Roofpig"]
-	path = vendors/Roofpig
-	url = https://github.com/larspetrus/Roofpig.git
