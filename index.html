@@ -6,17 +6,6 @@
         <meta name="description" content="Cube Simulator">
         <meta name="author" content="gwanryo">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <style>
-            div.cube-six {
-                position: fixed;
-                right: 0;
-                top: 0;
-            }
-            div#cube-status {
-                width: 600px;
-                height: 600px;
-            }
-        </style>
     </head>
     <body>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -25,47 +14,47 @@
         <script src="static/cubejs/lib/cube.js"></script>
         <script src="static/cubejs/lib/solve.js"></script>
         <script src="static/Roofpig/local/build/roofpig_and_three.min.js"></script>
-        <!-- <div class="container">
+        <div class="container">
             <div class="row">
                 <div class="col-12">
                     <h1>Cube Simulator</h1>
                 </div>
             </div>
-        </div> -->
+        </div>
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-12">
-                    <div class="cube-info" id="cube-status" style="text-align:center;">
+                    <div class="row justify-content-center">
+                        <div class="col-4">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="times">Attempts</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="5" aria-label="times" aria-describedby="times" value="5">
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="light">Brightness</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="0~255" aria-label="light" aria-describedby="light" value="32">
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="btn-group d-flex" role="group" aria-label="cube-control">
+                                <button type="button" class="btn btn-light w-100 btn-set">Set</button>
+                                <button type="button" class="btn btn-light w-100 btn-start">Start</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="btn-group" role="group" aria-label="cube-control">
-                        <button type="button" class="btn btn-light btn-start">Start</button>
+                    <div class="row justify-content-center camera-status" id="camera-status">
+                        <img src="http://localhost:8080/?action=stream" style="border: 2px solid black; margin-right: 2px;">
+                        <img src="http://localhost:8081/?action=stream" style="border: 2px solid black;">
                     </div>
-                    <!-- <div class="cube-six" style="min-height:300px">
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td></td>
-                                    <td class="cube-up"></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="cube-left"></td>
-                                    <td class="cube-front"></td>
-                                    <td class="cube-right"></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td class="cube-bottom"></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td class="cube-back"></td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div> -->
+                    <div class="row justify-content-center cube-info" id="cube-status">
+                        <img src="https://picsum.photos/600/600" style="border: 2px solid black; margin-top: 2px;">
+                    </div>
                 </div>
             </div>
         </div>
