@@ -28,17 +28,17 @@
                         <div class="col-4">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text" id="times">Attempts</span>
+                                    <span class="input-group-text" id="times">Time</span>
                                 </div>
-                                <input type="text" class="form-control" placeholder="5" aria-label="times" aria-describedby="times" value="5">
+                                <input type="number" class="form-control" id="times-input" placeholder="5" aria-label="times" aria-describedby="times" value="5" min="1" max="10">
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text" id="light">Brightness</span>
+                                    <span class="input-group-text" id="light">Bright</span>
                                 </div>
-                                <input type="text" class="form-control" placeholder="0~255" aria-label="light" aria-describedby="light" value="32">
+                                <input type="number" class="form-control" id="light-input" placeholder="0~255" aria-label="light" aria-describedby="light" value="32" min="0" max="255">
                             </div>
                         </div>
                         <div class="col-4">
@@ -47,13 +47,21 @@
                                 <button type="button" class="btn btn-light w-100 btn-start">Start</button>
                             </div>
                         </div>
+                        <div class="col-12">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="cube-string">Results</span>
+                                </div>
+                                <input type="text" class="form-control" id="cube-string-input" aria-label="cube-string" aria-describedby="cube-string" disabled>
+                            </div>
+                        </div>
                     </div>
                     <div class="row justify-content-center camera-status" id="camera-status">
                         <img src="./video/0" style="border: 2px solid black; margin-right: 2px;">
                         <img src="./video/1" style="border: 2px solid black;">
                     </div>
                     <div class="row justify-content-center cube-info" id="cube-status">
-                        <img src="https://picsum.photos/600/600" style="border: 2px solid black; margin-top: 2px;">
+                        
                     </div>
                 </div>
             </div>
@@ -62,60 +70,74 @@
         <script>
             const cube = new Cube();
             let algo, scramble, prev_algo = [], next_algo = [];
+            let cubeString = 'UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB';
 
-            $('button.btn-start').click(function() {
-                cube.randomize();
-                console.log(cube.asString());
-                
-                Cube.initSolver();
-                algo = cube.solve();
-                //next_algo = algo.split(' ');
-                scramble = Cube.inverse(algo);
-
-                CubeAnimation.create_in_dom('#cube-status', "algdisplay=fancy2s | flags=showalg | hover=far | alg=" + algo, "class='roofpig'");
-                //reloadCube(scramble);
+            $('button.btn-set').click(function() {
+                $('#cube-status').html('<p>Waiting...</p>');
+                $.ajax({
+                    type: 'POST',
+                    url: '/cube/light',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: {
+                        'light': $('input[type=number]#light-input').val()
+                    },
+                    error: function(error) {
+                        alert('Cannot connect to server!');
+                    },
+                    success: function(data) {
+                        if (data.success !== 1) {
+                            alert('Cannot apply light brightness!');
+                        }
+                    },
+                    complete: function() {
+                        $('#cube-status').html('');
+                    }
+                });
             });
 
-            //cube.fromString("UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB");
-            // $('button.btn-prev').click(function() {
-            //     if (prev_algo.length > 0) {
+            $('button.btn-start').click(function() {
+                $('#cube-status').html('<p>Waiting...</p>');
+                $.ajax({
+                    type: 'POST',
+                    url: '/',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: {
+                        'count': $('input[type=number]#times-input').val(),
+                        'light': $('input[type=number]#light-input').val()
+                    },
+                    error: function(error) {
+                        alert('Cannot connect to server!');
+                    },
+                    success: function(data) {
+                        // Put cube face string in U R F D L B
+                        cubeString = data.cube[3].faceString.join('') + data.cube[1].faceString.join('') + 
+                            data.cube[5].faceString.join('') + data.cube[2].faceString.join('') + 
+                            data.cube[4].faceString.join('') + data.cube[0].faceString.join('');
+                        
+                        $('input[type=text]#cube-string-input').val(cubeString)
+                        
+                        if (data.success !== 1) {
+                            alert('Unsuccessful cube recognition!');
+                        }
+                    },
+                    complete: function() {
+                        $('#cube-status').html('');
+                        //cube.randomize();
+                        cube.fromString(cubeString);
+                        console.log(cube.asString());
+                        
+                        Cube.initSolver();
+                        algo = cube.solve();
+                        //next_algo = algo.split(' ');
+                        scramble = Cube.inverse(algo);
 
-            //     } else {
-            //         alert('No prev steps!');
-            //     }
-            // });
-
-            // $('button.btn-next').click(function() {
-            //     if (next_algo.length > 0) {
-            //         let next_move = next_algo[0];
-            //         prev_algo.push(next_move);
-            //         algo = algo.replace(next_move, '').trim();
-            //         next_algo.splice(0, 1);
-
-            //         cube.move(next_move);
-            //         reloadCube(Cube.inverse(algo));
-            //     } else {
-            //         alert('No next steps!');
-            //     }
-            // });
-
-            // function reloadCube(method) {
-            //     var s = method.replace(/\s+/g, ''),  // remove spaces
-            //         //url = "http://cube.crider.co.uk/visualcube.png?fmt=png&view=trans&size=300&alg=" + s;
-            //         url_up = "http://cube.crider.co.uk/visualcube.png?fmt=png&r=x-90y0z0&size=150&alg=" + s;
-            //         url_front = "http://cube.crider.co.uk/visualcube.png?fmt=png&r=x0y0z0&size=150&alg=" + s;
-            //         url_bottom = "http://cube.crider.co.uk/visualcube.png?fmt=png&r=x90y0z0&size=150&alg=" + s;
-            //         url_right = "http://cube.crider.co.uk/visualcube.png?fmt=png&r=x0y90z0&size=150&alg=" + s;
-            //         url_left = "http://cube.crider.co.uk/visualcube.png?fmt=png&r=x0y-90z0&size=150&alg=" + s;
-            //         url_back = "http://cube.crider.co.uk/visualcube.png?fmt=png&r=x180y0z0&size=150&alg=" + s;
-            //     //$('div.cube-status').append(algo + "<br>" + method + "<br><img src=\"" + url + "\"><br>");
-            //     $('td.cube-front').html("<img src=\"" + url_front + "\"><br>");
-            //     $('td.cube-up').html("<img src=\"" + url_up + "\"><br>");
-            //     $('td.cube-bottom').html("<img src=\"" + url_bottom + "\"><br>");
-            //     $('td.cube-right').html("<img src=\"" + url_right + "\"><br>");
-            //     $('td.cube-left').html("<img src=\"" + url_left + "\"><br>");
-            //     $('td.cube-back').html("<img src=\"" + url_back + "\"><br>");
-            // }
+                        CubeAnimation.create_in_dom('#cube-status', "algdisplay=fancy2s | flags=showalg | hover=far | alg=" + algo, "class='roofpig'");
+                        //reloadCube(scramble);
+                    }
+                });
+            });
         </script>
     </body>
 </html>
