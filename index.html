@@ -68,7 +68,6 @@
         </div>
         
         <script>
-            const cube = new Cube();
             let algo, scramble, prev_algo = [], next_algo = [];
             let cubeString = 'UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB';
 
@@ -100,7 +99,7 @@
                 $('#cube-status').html('<p>Waiting...</p>');
                 $.ajax({
                     type: 'POST',
-                    url: '/',
+                    url: '/cube',
                     contentType: 'application/json',
                     dataType: 'json',
                     data: {
@@ -125,7 +124,7 @@
                     complete: function() {
                         $('#cube-status').html('');
                         //cube.randomize();
-                        cube.fromString(cubeString);
+                        let cube = new Cube(Cube.fromString(cubeString));
                         console.log(cube.asString());
                         
                         Cube.initSolver();
