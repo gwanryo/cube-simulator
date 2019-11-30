@@ -30,7 +30,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="times">Time</span>
                                 </div>
-                                <input type="number" class="form-control" id="times-input" placeholder="5" aria-label="times" aria-describedby="times" value="5" min="1" max="10">
+                                <input type="number" class="form-control" id="times-input" placeholder="1~5" aria-label="times" aria-describedby="times" value="3" min="1" max="5">
                             </div>
                         </div>
                         <div class="col-4">
@@ -52,15 +52,15 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="cube-string">Results</span>
                                 </div>
-                                <input type="text" class="form-control" id="cube-string-input" aria-label="cube-string" aria-describedby="cube-string" disabled>
+                                <input type="text" class="form-control" id="cube-string-input" aria-label="cube-string" aria-describedby="cube-string" readonly>
                             </div>
                         </div>
                     </div>
                     <div class="row justify-content-center camera-status" id="camera-status">
-                        <img src="./video/0" style="border: 2px solid black; margin-right: 2px;">
-                        <img src="./video/1" style="border: 2px solid black;">
+                        <img src="/video/0" style="border: 2px solid black; margin-right: 2px;">
+                        <img src="/video/1" style="border: 2px solid black;">
                     </div>
-                    <div class="row justify-content-center cube-info" id="cube-status">
+                    <div class="cube-info" id="cube-status" style="width: 440px; height: 499px;margin:0 auto;">
                         
                     </div>
                 </div>
@@ -107,7 +107,7 @@
                         'light': $('input[type=number]#light-input').val()
                     }),
                     error: function(error) {
-                        alert('Cannot connect to server!');
+                        $('#cube-status').html('<p>Server error!</p>');
                     },
                     success: function(data) {
                         // Put cube face string in U R F D L B
@@ -115,10 +115,12 @@
                             data.cube[5].faceString.join('') + data.cube[2].faceString.join('') + 
                             data.cube[4].faceString.join('') + data.cube[0].faceString.join('');
                         
-                        $('input[type=text]#cube-string-input').val(cubeString)
+                        $('input[type=text]#cube-string-input').val(cubeString);
+                        console.log(cubeString);
                         
                         if (data.success !== 1) {
-                            alert('Unsuccessful cube recognition!');
+                            $('#cube-status').html('<p>Unsuccessful cube recognition!</p>');
+                            cubeString = 'UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB';
                         }
                     },
                     complete: function() {
