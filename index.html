@@ -78,9 +78,9 @@
                     url: '/cube/light',
                     contentType: 'application/json',
                     dataType: 'json',
-                    data: {
+                    data: JSON.stringify({
                         'light': $('input[type=number]#light-input').val()
-                    },
+                    }),
                     error: function(error) {
                         alert('Cannot connect to server!');
                     },
@@ -102,10 +102,10 @@
                     url: '/cube',
                     contentType: 'application/json',
                     dataType: 'json',
-                    data: {
+                    data: JSON.stringify({
                         'count': $('input[type=number]#times-input').val(),
                         'light': $('input[type=number]#light-input').val()
-                    },
+                    }),
                     error: function(error) {
                         alert('Cannot connect to server!');
                     },
