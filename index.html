@@ -70,6 +70,7 @@
         <script>
             let algo, scramble, prev_algo = [], next_algo = [];
             let cubeString = 'UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB';
+            let cubeColor = '';
 
             $('button.btn-set').click(function() {
                 $('#cube-status').html('<p>Waiting...</p>');
@@ -117,6 +118,14 @@
                         
                         $('input[type=text]#cube-string-input').val(cubeString);
                         console.log(cubeString);
+
+                        cubeColor = 'U:' + data.cube[3].centerColor.toLowerCase()
+                            + ' R:' + data.cube[1].centerColor.toLowerCase()
+                            + ' F:' + data.cube[5].centerColor.toLowerCase()
+                            + ' D:' + data.cube[2].centerColor.toLowerCase()
+                            + ' L:' + data.cube[4].centerColor.toLowerCase()
+                            + ' B:' + data.cube[0].centerColor.toLowerCase();
+                        console.log(cubeColor);
                         
                         if (data.success !== 1) {
                             $('#cube-status').html('<p>Unsuccessful cube recognition!</p>');
@@ -134,7 +143,7 @@
                         //next_algo = algo.split(' ');
                         scramble = Cube.inverse(algo);
 
-                        CubeAnimation.create_in_dom('#cube-status', "algdisplay=fancy2s | flags=showalg | hover=far | alg=" + algo, "class='roofpig'");
+                        CubeAnimation.create_in_dom('#cube-status', "algdisplay=fancy2s | flags=showalg | hover=far | alg=" + algo + " | colors=" + cubeColor, "class='roofpig'");
                         //reloadCube(scramble);
                     }
                 });
